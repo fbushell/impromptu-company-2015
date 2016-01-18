@@ -1,4 +1,4 @@
-garberco
+Impromptu Company V2
 ========
 
-> Photo site for Ryan Garber.
+> Portfolio site for Impromptu Company.

@@ -1,7 +1,7 @@
 {
-  "title": "GarberCo",
-  "name": "garberco",
-  "description": "Photo site for Ryan Garber.",
+  "title": "ImpromptuCompany",
+  "name": "impromptu",
+  "description": "Portfolio site for Impromptu Company.",
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
@@ -56,24 +56,24 @@
   "start": "npm run watch",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kitajchuk/garberco.git"
+    "url": "git://github.com/fbushell/impromptu-v2.git"
   },
   "bugs": {
-    "url": "https://github.com/kitajchuk/garberco/issues"
+    "url": "https://github.com/fbushell/impromptu-v2/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/kitajchuk/garberco/blob/master/LICENSE"
+      "url": "https://github.com/fbushell/impromptu-v2/blob/master/LICENSE"
     }
   ],
   "keywords": [],
   "license": "MIT",
   "contributors": [
     {
-      "name": "Brandon Kitajchuk",
-      "email": "kitajchuk@gmail.com",
-      "url": "http://blkpdx.com"
+      "name": "Frankie Bushell",
+      "email": "frank@weareciro.com",
+      "url": "http://wearecirro.com"
     }
   ],
   "readmeFilename": "README.md"

@@ -82,6 +82,8 @@ const onUpdateEmitter = function () {
 const onPageClick = function ( e ) {
     e.preventDefault();
 
+    console.log("******PROJECT CLICKED");
+
     if ( !$( e.target ).closest( ".js-project-tile" ).length ) {
         projects.closeShim();
     }
@@ -107,7 +109,7 @@ const onTileClick = function ( e ) {
     })
     .done(( response ) => {
         const $node = $( response );
-        const $project = $node.filter( ".js-page" ).find( ".js-project" );
+        const $project = $node.filter( ".js-page" ).find( ".js-work" );
 
         $_jsPlates = $project.find( ".js-project-plate" );
 
