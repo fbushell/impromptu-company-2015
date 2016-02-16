@@ -1,7 +1,9 @@
 import $ from "js_libs/jquery/dist/jquery";
+import * as util from "./util";
 
 
-const $_jsHeader = $( ".js-header" );
+const $_jsOverlay = $( ".js-overlay" );
+const $_jsProject = $( ".js-project" );
 
 
 /**
@@ -70,12 +72,38 @@ const dom = {
     /**
      *
      * @public
-     * @member shim
+     * @member project
      * @memberof dom
-     * @description The project shim node.
+     * @description The project view node.
      *
      */
-    shim: $( ".js-project-shim" ),
+    project: {
+        element: $_jsProject,
+        elementNode: $_jsProject.find( ".js-project-node" ),
+        elementTransitionDuration: util.getTransitionDuration( $_jsProject[ 0 ] )
+    },
+
+
+    /**
+     *
+     * @public
+     * @member logo
+     * @memberof dom
+     * @description The logo element.
+     *
+     */
+    logo: $( ".js-logo" ),
+
+
+    /**
+     *
+     * @public
+     * @member homepage
+     * @memberof dom
+     * @description The homepage grid element.
+     *
+     */
+    homepage: $( ".js-homepage" ),
 
 
     /**
@@ -86,7 +114,7 @@ const dom = {
      * @description The cached header node.
      *
      */
-    header: $_jsHeader.data( "$util", $_jsHeader.find( ".js-header-util" ) ),
+    header: $( ".js-header" ),
 
 
     /**
@@ -97,7 +125,10 @@ const dom = {
      * @description The cached brand moment node.
      *
      */
-    intro: $( ".js-intro" )
+    overlay: {
+        element: $_jsOverlay,
+        elementTitle: $_jsOverlay.find( ".js-overlay-title" )
+    }
 };
 
 

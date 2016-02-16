@@ -19,13 +19,15 @@ const router = {
      *
      * @public
      * @method init
+     * @param {App} app Instance of the main application
      * @memberof router
      * @description Initialize the router module.
      *
      */
-    init () {
+    init ( app ) {
+        this.app = app;
         this.bindCaptureLinks();
-        this.createPageController();
+        this.initPageController();
 
         core.log( "router initialized" );
     },
@@ -34,12 +36,12 @@ const router = {
     /**
      *
      * @public
-     * @method createPageController
+     * @method initPageController
      * @memberof router
      * @description Create the PageController instance.
      *
      */
-    createPageController () {
+    initPageController () {
         this.controller = new PageController({
             transitionTime: _pageDuration
         });
@@ -49,15 +51,36 @@ const router = {
         ]);
 
         this.controller.setModules([
-            core.preload,
+            core.images,
             animate
         ]);
 
         this.controller.on( "page-controller-router-transition-out", this.changePageOut.bind( this ) );
         this.controller.on( "page-controller-router-refresh-document", this.changeContent.bind( this ) );
         this.controller.on( "page-controller-router-transition-in", this.changePageIn.bind( this ) );
+        this.controller.on( "page-controller-initialized-page", ( html ) => {
+            this.cachePage( core.dom.html, $( html ).filter( ".js-page" )[ 0 ].innerHTML );
+        });
 
         this.controller.initPage();
+    },
+
+
+    /**
+     *
+     * @public
+     * @method cachePage
+     * @param {jQuery} $object The node for use
+     * @param {string} response The XHR responseText
+     * @memberof router
+     * @description Cache the DOM content for a page once its parsed out.
+     *
+     */
+    cachePage ( $object, response ) {
+        core.cache.set( this.getPageKey(), {
+            $object,
+            response
+        });
     },
 
 
@@ -106,48 +129,6 @@ const router = {
     /**
      *
      * @public
-     * @method track
-     * @param {string} type The object type, item or collection
-     * @param {object} data The data context to track with
-     * @memberof router
-     * @description Track Squarespace Metrics since we are ajax-routing.
-     *
-     */
-    track ( type, data ) {
-        core.log( "router:track:View", type, data );
-
-        Y.Squarespace.Analytics.view( type, data );
-    },
-
-
-    /**
-     *
-     * @public
-     * @method pushTrack
-     * @param {string} html The full responseText from an XHR request
-     * @param {jQuery} $doc Optional document node to receive and work with
-     * @memberof router
-     * @description Parse static context from responseText and track it.
-     *
-     */
-    pushTrack ( html, $doc ) {
-        let ctx = null;
-
-        $doc = ($doc || $( html ));
-
-        ctx = this.getStaticContext( html );
-
-        if ( ctx ) {
-            this.track( (ctx.item ? "item" : "collection"), (ctx.item || ctx.collection) );
-        }
-
-        this.setDocumentTitle( $doc.filter( "title" ).text() );
-    },
-
-
-    /**
-     *
-     * @public
      * @method onPreloadDone
      * @memberof router
      * @description Finish routing sequence when image pre-loading is done.
@@ -163,6 +144,11 @@ const router = {
         core.scrolls.topout( 0 );
         core.scrolls.clearStates();
 
+        setTimeout( () => {
+            core.util.emitter.fire( "app--intro-art" );
+
+        }, _pageDuration );
+
         core.util.emitter.off( "app--preload-done", this.onPreloadDone );
     },
 
@@ -170,51 +156,13 @@ const router = {
     /**
      *
      * @public
-     * @method getStaticContext
-     * @param {string} resHTML The responseText HTML string from router
-     * @memberof router
-     * @description Attempt to parse the Squarespace data context from responseText.
-     * @returns {object}
-     *
-     */
-    getStaticContext ( resHTML ) {
-        // Match the { data } in Static.SQUARESPACE_CONTEXT
-        let ctx = resHTML.match( /Static\.SQUARESPACE_CONTEXT\s=\s(.*?)\};/ );
-
-        if ( ctx && ctx[ 1 ] ) {
-            ctx = ctx[ 1 ];
-
-            // Put the ending {object} bracket back in there :-(
-            ctx = `${ctx}}`;
-
-            // Parse the string as a valid piece of JSON content
-            try {
-                ctx = JSON.parse( ctx );
-
-            } catch ( error ) {
-                throw error;
-            }
-
-            // We now have the new pages context for Metrics
-            //core.log( "router:getStaticContext", ctx );
-
-        } else {
-            ctx = false;
-        }
-
-        return ctx;
-    },
-
-
-    /**
-     *
-     * @public
      * @method changePageOut
+     * @param {object} data The data object supplied by PageController from PushState
      * @memberof router
      * @description Trigger transition-out animation.
      *
      */
-    changePageOut () {
+    changePageOut ( /* data */ ) {
         core.util.disableMouseWheel( true );
         core.util.disableTouchMove( true );
 
@@ -235,12 +183,24 @@ const router = {
      *
      */
     changeContent ( html ) {
-        const $doc = $( html );
-        const res = $doc.filter( ".js-page" )[ 0 ].innerHTML;
+        let $object = null;
+        let response = null;
+        const cached = core.cache.get( this.getPageKey() );
 
-        core.dom.page[ 0 ].innerHTML = res;
+        if ( cached ) {
+            $object = cached.$object;
+            response = cached.response;
 
-        this.pushTrack( html, $doc );
+        } else {
+            $object = $( html ).filter( "title, div, main, section, header, footer, span" );
+            response = $object.filter( ".js-page" )[ 0 ].innerHTML;
+
+            this.cachePage( $object, response );
+        }
+
+        core.dom.page[ 0 ].innerHTML = response;
+
+        core.util.emitter.fire( "app--analytics-push", html, $object );
 
         core.util.emitter.fire( "app--cleanup" );
     },
@@ -257,20 +217,6 @@ const router = {
      */
     changePageIn ( /* data */ ) {
         core.dom.page.addClass( "is-reactive" );
-    },
-
-
-    /**
-     *
-     * @public
-     * @method setDocumentTitle
-     * @param {string} title The new title for the document
-     * @memberof router
-     * @description Update the documents title.
-     *
-     */
-    setDocumentTitle ( title ) {
-        document.title = title;
     }
 };
 
