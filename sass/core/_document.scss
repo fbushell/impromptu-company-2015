@@ -22,10 +22,15 @@ html {
     box-sizing: border-box;
     overflow-x: hidden;
     overflow-y: auto;
+    font-size: 18px;
+
     }
 body {
     background-color: $grey-bg;
     color: $black;
+    font-family: $sans-serif-text;
+    font-weight: 300;
+    font-size: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );

@@ -58,6 +58,7 @@ class Project {
         this.open();
 
         router.push( this.opts.url, () => {} );
+        debugger;
 
         if ( cached ) {
             this.onLoadCollection( cached );
@@ -111,7 +112,7 @@ class Project {
 
     onUpdateEmitter () {
         this.updatePlates();
-        this.updatePosition();
+        // this.updatePosition();
     }
 
 
@@ -119,13 +120,15 @@ class Project {
         let html = "";
         let $project = null;
 
+        // debugger;
+
         if ( typeof response === "object" ) {
             html = response.response;
             $project = $( response.response );
 
         } else {
             html = response;
-            $project = $( response ).filter( ".js-page" ).find( ".js-project" );
+            $project = $( response ).filter( ".js-page" ).find( ".js-project-node" );
         }
 
         core.util.emitter.fire( "app--analytics-push", html );
@@ -156,6 +159,7 @@ class Project {
     open () {
         core.dom.html.addClass( "is-neverflow is-project-active" );
         core.dom.page.append( core.dom.project.element );
+        // debugger;
 
         setTimeout( () => core.dom.project.element.addClass( "is-active" ), 100 );
     }

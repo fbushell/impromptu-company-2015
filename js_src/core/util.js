@@ -477,6 +477,15 @@ const getDefaultHammerOptions = function () {
 };
 
 
+/**
+ *
+ * @public
+ * @method getPageKey
+ * @memberof util
+ * @description Determine the key for local page cache storage.
+ * @returns {string}
+ *
+ */
 const getPageKey = function () {
     return `${window.location.pathname}${window.location.search}`;
 };

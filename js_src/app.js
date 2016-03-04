@@ -75,7 +75,7 @@ class App {
         const format = { format: "full", nocache: true };
 
         this.core.api.collection(
-            "/",
+            "/work",
             format,
             dataType
 

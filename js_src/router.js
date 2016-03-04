@@ -67,17 +67,17 @@ const router = {
 
 
     /**
-     *
-     * @public
-     * @method cachePage
-     * @param {jQuery} $object The node for use
-     * @param {string} response The XHR responseText
-     * @memberof router
-     * @description Cache the DOM content for a page once its parsed out.
-     *
-     */
+    *
+    * @public
+    * @method cachePage
+    * @param {jQuery} $object The node for use
+    * @param {string} response The XHR responseText
+    * @memberof router
+    * @description Cache the DOM content for a page once its parsed out.
+    *
+    */
     cachePage ( $object, response ) {
-        core.cache.set( this.getPageKey(), {
+        core.cache.set( core.util.getPageKey(), {
             $object,
             response
         });
@@ -185,7 +185,7 @@ const router = {
     changeContent ( html ) {
         let $object = null;
         let response = null;
-        const cached = core.cache.get( this.getPageKey() );
+        const cached = core.cache.get( core.util.getPageKey() );
 
         if ( cached ) {
             $object = cached.$object;
