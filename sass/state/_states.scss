@@ -1,5 +1,5 @@
 /******************************************************************************
- * Document
+ * States
 *******************************************************************************/
 .is-neverflow {
     overflow: hidden;
@@ -11,20 +11,42 @@
     overflow: hidden;
 }
 
-.is-scrolling {
-    pointer-events: none;
+.is-offcanvas--about {
+    .header__nav--index,
+    .header__nav--about {
+        pointer-events: none;
+        visibility: hidden;
+        }
+    .nav__back--arrow-left {
+        display: block;
+        }
 }
 
-.is-scrolling-up {
+.is-offcanvas--index {
+    .header__nav--about,
+    .header__nav--index {
+        pointer-events: none;
+        visibility: hidden;
+        }
+    .nav__back--arrow-right {
+        display: block;
+        }
 }
 
-.is-scrolling-down {
+.is-offcanvas--project {
+    .header__nav--about,
+    .header__nav--index {
+        pointer-events: none;
+        visibility: hidden;
+        }
+    .nav__back--x,
+    .nav__back--info {
+        display: block;
+        }
 }
 
-
-
-/******************************************************************************
- * Routing
-*******************************************************************************/
-.is-routing {
+.is-menu-open {
+    .overlay {
+        background-color: $white;
+        }
 }

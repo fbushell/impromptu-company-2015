@@ -5,6 +5,22 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: ($z_layer_infront + 1);
+    z-index: $z_layer_infront ;
     @include layout-frame();
+    }
+.header__nav {
+    transition: opacity $base-duration $ease;
+    }
+.header__nav--about {
+    text-align: left;
+    }
+.header__nav--index {
+    text-align: right;
+    }
+.header__nav--about,
+.header__nav--index {
+    width: 25%;
+    }
+.header__nav--garberco {
+    width: 50%;
     }

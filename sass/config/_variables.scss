@@ -1,7 +1,7 @@
 /******************************************************************************
  * Fonts
 *******************************************************************************/
-$sans-serif-text: "acumin-pro-wide";
+$sans-serif-text: "Value Regular";
 $sans-serif-text-medium: "Value Medium";
 
 
@@ -10,6 +10,7 @@ $sans-serif-text-medium: "Value Medium";
  * Colors
 *******************************************************************************/
 $black: #000;
+$dark: #111;
 $white: #fff;
 $grey-bg: #f1f1f1;
 
@@ -26,13 +27,15 @@ $grid-columns: 12 11 10 9 8 7 6 5 4 3 2 1;
 /******************************************************************************
  * Spacing
 *******************************************************************************/
-$nudge-size: 40px;
 $bump-size: 80px;
-$mobile-padding: 30px;
+$nudge-size: 40px;
 $expander-padding: 160px;
-$wrapper-padding: 8.3461538462%;
-$grid-item-padding: 5.5%;
-$header-fix-height: 90px;
+$photos-padding: 8.3461538462%;
+$spacer-padding: 8.3461538462%;
+$wrapper-padding: (8.3461538462% / 2);
+$header-fix-height: 70px;
+$mobile-padding: 30px;
+$grid-padding: 45px;
 
 
 
@@ -47,15 +50,10 @@ $header-fix-height: 90px;
  * Typography
 *******************************************************************************/
 $p-size: 18px;
-$p-size-small: 15px;
 $meta-size: 16px;
-$meta-size-small: 15px;
-$h1-size: 7vw;
-$h1-size-small: 30px;
-$h2-size: 40px;
-$h2-size-small: 25px;
-$h3-size: 35px;
-$h3-size-small: 22px;
+$h1-size: 160px;
+$h2-size: 60px;
+$h3-size: 23px;
 
 
 

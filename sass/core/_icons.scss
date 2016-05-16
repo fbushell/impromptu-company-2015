@@ -1,6 +1,17 @@
 /******************************************************************************
  * Icons: Base
 *******************************************************************************/
+.icon-wrap {
+    cursor: pointer;
+    display: inline-block;
+    padding: 30px;
+    }
+.icon-wrap--left {
+    margin: 0px 0 0 -30px;
+    }
+.icon-wrap--right {
+    margin: 0px -30px 0 0;
+    }
 .icon {
     cursor: pointer;
     display: inline-block;
@@ -18,7 +29,31 @@
 
 
 
-.logo {
-    max-width: 200px;
-    width: 100%;
+svg {
+    pointer-events: none;
     }
+
+
+
+.icon--x,
+.icon--arrow-left,
+.icon--arrow-right {
+    svg {
+        height: 16px;
+        }
+}
+.icon--garberco {
+    svg {
+        height: 30px;
+        }
+}
+.icon--garberco--intro {
+    svg {
+        height: 100px;
+        }
+}
+.icon--pencil {
+    svg {
+        height: 16px;
+        }
+}

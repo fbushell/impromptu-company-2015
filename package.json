@@ -1,7 +1,7 @@
 {
-  "title": "ImpromptuV2",
-  "name": "impromptu",
-  "description": "Portfolio site for Impromptu Company.",
+  "title": "GarberCo",
+  "name": "garberco",
+  "description": "Photo site for Ryan Garber.",
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
@@ -14,15 +14,15 @@
     "expose-loader": "^0.7.0",
     "fg-loadcss": "^0.2.4",
     "fg-loadjs": "^0.2.3",
-    "hammerjs": "^2.0.4",
+    "hammerjs": "^2.0.6",
     "parallelshell": "^2.0.0",
     "paramalama": "~0.2",
     "postcss-cli": "^2.1.0",
     "properjs-controller": "~0.2",
     "properjs-debounce": "^0.2.0",
     "properjs-easing": "~0.2",
-    "properjs-hammered": "~0.3",
-    "properjs-imageloader": "~0.2",
+    "properjs-hammered": "^0.3.1",
+    "properjs-imageloader": "~0.3",
     "properjs-matchelement": "~0.2",
     "properjs-mediabox": "~0.3",
     "properjs-pagecontroller": "~0.3",
@@ -56,24 +56,24 @@
   "start": "npm run watch",
   "repository": {
     "type": "git",
-    "url": "git://github.com/fbushell/impromptu-v2.git"
+    "url": "git://github.com/kitajchuk/garberco.git"
   },
   "bugs": {
-    "url": "https://github.com/fbushell/impromptu-v2/issues"
+    "url": "https://github.com/kitajchuk/garberco/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/fbushell/impromptu-v2/blob/master/LICENSE"
+      "url": "https://github.com/kitajchuk/garberco/blob/master/LICENSE"
     }
   ],
   "keywords": [],
   "license": "MIT",
   "contributors": [
     {
-      "name": "Frankie Bushell",
-      "email": "fbushell@gmail.com",
-      "url": "http://wearecirro.com"
+      "name": "Brandon Kitajchuk",
+      "email": "kitajchuk@gmail.com",
+      "url": "http://blkpdx.com"
     }
   ],
   "readmeFilename": "README.md"

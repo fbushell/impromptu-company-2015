@@ -1,8 +1,6 @@
 import dom from "./dom";
-import * as util from "./util";
-import log from "./log";
 import config from "./config";
-import ImageLoader from "properjs-imageloader";
+import emitter from "./emitter";
 import ImageController from "./ImageController";
 
 
@@ -18,57 +16,6 @@ const images = {
     /**
      *
      * @public
-     * @method init
-     * @memberof core.images
-     * @description Method runs once when window loads.
-     *
-     */
-    init () {
-        log( "preload initialized" );
-    },
-
-
-    /**
-     *
-     * @public
-     * @method isActive
-     * @memberof core.images
-     * @description Method informs PageController of active status.
-     * @returns {boolean}
-     *
-     */
-    isActive: util.noop,
-
-
-    /**
-     *
-     * @public
-     * @method onload
-     * @memberof core.images
-     * @description Method performs onloading actions for this module.
-     *
-     */
-    onload () {
-        this.handleImages();
-    },
-
-
-    /**
-     *
-     * @public
-     * @method unload
-     * @memberof core.images
-     * @description Method performs unloading actions for this module.
-     *
-     */
-    unload () {
-        ImageLoader.killInstances();
-    },
-
-
-    /**
-     *
-     * @public
      * @method handlePreload
      * @memberof core.images
      * @param {function} callback The passed callback from `handleImages`
@@ -80,7 +27,20 @@ const images = {
             callback();
         }
 
-        util.emitter.fire( "app--preload-done" );
+        emitter.fire( "app--preload-done" );
+    },
+
+
+    /**
+     *
+     * @public
+     * @method handleLazyload
+     * @memberof core.images
+     * @description Method handles the `done` lazyloading event cycle.
+     *
+     */
+    handleLazyload () {
+        emitter.fire( "app--lazyload-done" );
     },
 
 
@@ -101,10 +61,7 @@ const images = {
             const imageController = new ImageController( $images );
 
             imageController.on( "preload", this.handlePreload.bind( this, callback ) );
-
-            imageController.on( "lazyload", () => {
-                util.emitter.fire( "app--lazyload-done" );
-            });
+            imageController.on( "lazyload", this.handleLazyload.bind( this ) );
 
         } else {
             this.handlePreload( callback );

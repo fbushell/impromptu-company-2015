@@ -1,6 +1,3 @@
-import Easing from "properjs-easing";
-
-
 /**
  *
  * @public
@@ -12,56 +9,23 @@ const config = {
     /**
      *
      * @public
-     * @member sqsMaxImgWidth
+     * @member rootUrlId
      * @memberof config
-     * @description The max width Squarespace allows for images.
+     * @description The urlId for "/".
      *
      */
-    sqsMaxImgWidth: 2500,
+    rootUrlId: "homepage",
 
 
     /**
      *
      * @public
-     * @member sqsSpecialProps
+     * @member homepageKey
      * @memberof config
-     * @description Normalize access to certain item object properties for application.
-     *
-     * Any of these indicate a post HAS a thumbnail image:
-     * - systemDataId
-     * - systemDataVariants
-     * - systemDataSourceType
-     * - systemDataOrigin
+     * @description The cache key to use for homepage.
      *
      */
-    sqsSpecialProps: {
-        published: "publishOn",
-        userUpload: "systemDataVariants",
-        blockDataKey: "blockJson",
-        mainContent: "main-content"
-    },
-
-
-    /**
-     *
-     * @public
-     * @member defaultEasing
-     * @memberof config
-     * @description The default easing function for javascript Tweens.
-     *
-     */
-    defaultEasing: Easing.easeInOutCubic,
-
-
-    /**
-     *
-     * @public
-     * @member defaultDuration
-     * @memberof config
-     * @description The default duration for javascript Tweens.
-     *
-     */
-    defaultDuration: 300,
+    homepageKey: "homepage",
 
 
     /**
@@ -100,23 +64,12 @@ const config = {
     /**
      *
      * @public
-     * @member asyncScriptPath
+     * @member offcanvasClasses
      * @memberof config
-     * @description The string path where async scripts are kept.
+     * @description The string of offcanvas element classNames.
      *
      */
-    asyncScriptPath: "/assets/async/scripts/",
-
-
-    /**
-     *
-     * @public
-     * @member asyncStylePath
-     * @memberof config
-     * @description The string path where async styles are kept.
-     *
-     */
-    asyncStylePath: "/assets/async/styles/"
+    offcanvasClasses: "is-offcanvas is-offcanvas--about is-offcanvas--index is-offcanvas--project"
 };
 
 

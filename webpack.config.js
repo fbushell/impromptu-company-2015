@@ -5,13 +5,13 @@ module.exports = {
 
 
     entry: {
-        app: "./js_src/App.js"
+        app: "./js_src/app.js"
     },
 
 
     output: {
         path: "./sqs_template/scripts/",
-        filename: "App.js"
+        filename: "app.js"
     },
 
 
@@ -19,13 +19,13 @@ module.exports = {
         loaders: [
             {
                 test: /js_src\/.*\.js$/,
-                exclude: /node_modules|jquery/,
+                exclude: /node_modules|js_libs/,
                 loaders: ["babel-loader"]
             },
 
             {
-                test: /jquery\.js$/,
-                loader: "expose?$!expose?jQuery"
+                test: /(hobo|hobo.build)\.js$/,
+                loader: "expose?$!expose?hobo"
             }
         ]
     }

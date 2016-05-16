@@ -47,15 +47,21 @@
 /******************************************************************************
  * Alignments
 *******************************************************************************/
-.valigner {
-    display: table;
-    height: 100%;
-    width: 100%;
-    }
-.valigner__cell {
-    display: table-cell;
+.ghost {
+    font-size: 0;
+
+    &:before {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        margin-left: -1px;
+        vertical-align: middle;
+        width: 1px;
+        }
+}
+.ghost__child {
+    display: inline-block;
     vertical-align: middle;
-    width: 100%;
     }
 
 
@@ -66,21 +72,57 @@
 .grid {
     font-size: 0;
     margin: 0;
-    padding-bottom: ($expander-padding + $header-fix-height);
-    padding-left: ($wrapper-padding / 2);
-    padding-right: ($wrapper-padding / 2);
-    padding-top: ($expander-padding + $header-fix-height);
+    padding-bottom: 0;
+    padding-left: $grid-padding;
+    padding-right: $grid-padding;
     position: relative;
-    text-align: center;
     width: auto;
     }
+.grid--index {}
 .grid__item {
     display: inline-block;
-    padding-left: ($wrapper-padding / 2);
-    padding-right: ($wrapper-padding / 2);
+    position: relative;
     vertical-align: middle;
     width: 33.33333%;
     }
-.grid__photo {
+.grid__item__small {
     display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    width: 16.666666667%;
+    }
+.grid__photo {
+    cursor: default;
+    display: inline-block;
+    padding-bottom: 100%;
+    width: 100%;
+
+    .image {
+        cursor: pointer;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate3d( -50%, -50%, 0 );
+        }
+    .image--tall {
+        height: #{"calc( ~\"100% - (#{$grid-padding} * 2)\" )"};
+        width: auto;
+        }
+    .image--wide {
+        height: auto;
+        width: #{"calc( ~\"100% - (#{$grid-padding} * 2)\" )"};
+        }
+}
+.grid__photo--small {
+    .image--tall {
+        height: #{"calc( ~\"100% - #{$grid-padding}\" )"};
+        width: auto;
+        }
+    .image--wide {
+        height: auto;
+        width: #{"calc( ~\"100% - #{$grid-padding}\" )"};
+        }
+}
+.grid__title {
+    display: none;
     }

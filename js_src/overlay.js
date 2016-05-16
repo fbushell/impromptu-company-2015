@@ -1,8 +1,8 @@
 import * as core from "./core";
 
 
-let _isActive = false;
-const _transTime = core.util.getTransitionDuration( core.dom.overlay.element[ 0 ] );
+let isActive = false;
+let isSuppressed = false;
 
 
 /**
@@ -23,7 +23,7 @@ const overlay = {
      */
     init () {
         if ( core.dom.overlay.element.is( ".is-active" ) ) {
-            _isActive = true;
+            isActive = true;
 
         } else {
             core.dom.overlay.element.detach();
@@ -31,36 +31,115 @@ const overlay = {
     },
 
 
+    /**
+     *
+     * @public
+     * @method open
+     * @memberof overlay
+     * @description Open the overlay.
+     * @returns {@this}
+     *
+     */
     open () {
-        _isActive = true;
+        if ( isActive || isSuppressed ) {
+            return this;
+        }
+
+        isActive = true;
 
         core.dom.html.addClass( "is-overlay-active" );
-        core.dom.page.append( core.dom.overlay.element );
+        core.dom.body.append( core.dom.overlay.element );
 
         setTimeout( () => core.dom.overlay.element.addClass( "is-active" ), 10 );
     },
 
 
+    /**
+     *
+     * @public
+     * @method close
+     * @memberof overlay
+     * @description Close the overlay.
+     * @returns {@this}
+     *
+     */
     close () {
+        if ( !isActive ) {
+            return this;
+        }
+
         core.dom.overlay.element.removeClass( "is-active" );
 
         setTimeout( () => {
-            _isActive = false;
+            isActive = false;
 
             core.dom.html.removeClass( "is-overlay-active" );
-            core.dom.overlay.element.detach();
+            core.dom.overlay.element.detach().removeClass( "is-intro" );
 
-        }, _transTime );
+            this.empty();
+
+        }, core.dom.overlay.elementTransitionDuration );
     },
 
 
+    /**
+     *
+     * @public
+     * @method empty
+     * @memberof overlay
+     * @description Empty the overlay.
+     *
+     */
+    empty () {
+        core.dom.overlay.elementTitle[ 0 ].innerHTML = "";
+    },
+
+
+    /**
+     *
+     * @public
+     * @method suppress
+     * @param {boolean} bool Will it be suppressed?
+     * @memberof overlay
+     * @description Suppress the overlay.
+     *
+     */
+    suppress ( bool ) {
+        isSuppressed = bool;
+
+        if ( isSuppressed && isActive ) {
+            this.close();
+        }
+    },
+
+
+    /**
+     *
+     * @public
+     * @method setTitle
+     * @param {string} text The text/html to set.
+     * @memberof overlay
+     * @description Add text to the overlay.
+     *
+     */
     setTitle ( text ) {
-        core.dom.overlay.elementTitle.html( text );
+        if ( !isSuppressed ) {
+            core.dom.overlay.elementTitle[ 0 ].innerHTML = text;
+        }
     },
 
 
+    /**
+     *
+     * @public
+     * @method isActive
+     * @memberof overlay
+     * @description Is the overlay open?.
+     * @returns {boolean}
+     *
+     */
     isActive () {
-        return _isActive;
+        return isActive;
     }
 };
 

@@ -7,46 +7,12 @@
  */
 
 
-import $ from "js_libs/jquery/dist/jquery";
-import Hammer from "hammerjs";
-import Controller from "properjs-controller";
-import ScrollController from "properjs-scrollcontroller";
-import ResizeController from "properjs-resizecontroller";
+import $ from "js_libs/hobo/dist/hobo.build";
 import ImageLoader from "properjs-imageloader";
-import MediaBox from "properjs-mediabox";
-import loadCSS from "fg-loadcss";
-import loadJS from "fg-loadjs";
 import dom from "./dom";
 import config from "./config";
 import detect from "./detect";
-
-
-/**
- *
- * @description Don't prevent default for <a /> nodes with Hammer...
- * @method safePreventDefault
- * @param {object} e The event object
- *
- */
-const safePreventDefault = function ( e ) {
-    if ( e.target.nodeName !== "A" ) {
-        e.preventDefault();
-    }
-};
-
-
-/**
- *
- * @description Noop a preventDefault() for event handlers
- * @method preNoop
- * @param {object} e The event object
- * @returns {boolean}
- *
- */
-const preNoop = function ( e ) {
-    e.preventDefault();
-    return false;
-};
+import Hammer from "hammerjs";
 
 
 /**
@@ -71,7 +37,7 @@ const px = function ( str ) {
  * @param {string|number} x The x value
  * @param {string|number} y The y value
  * @param {string|number} z The z value
- * @memberof util
+ * @memberof core.util
  *
  */
 const translate3d = function ( el, x, y, z ) {
@@ -81,50 +47,10 @@ const translate3d = function ( el, x, y, z ) {
 
 /**
  *
- * @description Single app instanceof [MediaBox]{@link https://github.com/ProperJS/MediaBox} for custom audio/video
- * @member mediabox
- * @memberof util
- *
- */
-const mediabox = new MediaBox();
-
-
-/**
- *
- * @description Single app instanceof [Controller]{@link https://github.com/ProperJS/Controller} for arbitrary event emitting
- * @member emitter
- * @memberof util
- *
- */
-const emitter = new Controller();
-
-
-/**
- *
- * @description Single app instanceof [ScrollController]{@link https://github.com/ProperJS/ScrollController}
- * @member scroller
- * @memberof util
- *
- */
-const scroller = new ScrollController();
-
-
-/**
- *
- * @description Single app instanceof [ResizeController]{@link https://github.com/ProperJS/ResizeController}
- * @member resizer
- * @memberof util
- *
- */
-const resizer = new ResizeController();
-
-
-/**
- *
  * @description Module onImageLoadHander method, handles event
  * @method isElementLoadable
  * @param {object} el The DOMElement to check the offset of
- * @memberof util
+ * @memberof core.util
  * @returns {boolean}
  *
  */
@@ -181,6 +107,16 @@ const getClosestValue = function ( arr, closestTo ) {
 };
 
 
+/**
+ *
+ * @public
+ * @method getElementsInView
+ * @param {Hobo} $nodes The elements to check
+ * @memberof util
+ * @description Get only visible elements
+ * @returns {Hobo}
+ *
+ */
 const getElementsInView = function ( $nodes ) {
     let i = $nodes.length;
     const $ret = $( [] );
@@ -199,7 +135,7 @@ const getElementsInView = function ( $nodes ) {
  *
  * @description Update images that have already been loaded
  * @method updateImages
- * @param {jQuery} images The optional argument passed collection to reload
+ * @param {Hobo} images The optional argument passed collection to reload
  * @memberof util
  *
  */
@@ -221,26 +157,30 @@ const updateImages = function ( images ) {
  * @param {object} images Optional collection of images to load
  * @param {function} handler Optional handler for load conditions
  * @param {boolean} useVariant Optional flag to skip loading size variants
+ * @param {number} useWidth Optional manual width to determine variant against
  * @memberof util
  * @returns {instance}
  *
  */
-const loadImages = function ( images, handler, useVariant ) {
+const loadImages = function ( images, handler, useVariant, useWidth ) {
+    const rQuery = /\?(.*)$/;
     const map = function ( vnt ) {
         return parseInt( vnt, 10 );
     };
     let $img = null;
     let data = null;
+    let dims = null;
     let vars = null;
     let width = null;
     let variant = null;
+    let source = null;
     let i = null;
 
     // Normalize the handler
-    handler = (handler || isElementLoadable);
+    handler = (handler || isElementInViewport);
 
     // Normalize the images
-    images = (images || $( config.lazyImageSelector ));
+    images = (images || dom.page.find( config.lazyImageSelector ));
 
     // Normalize the `useVariant` flag
     if ( !useVariant && useVariant !== false ) {
@@ -256,111 +196,43 @@ const loadImages = function ( images, handler, useVariant ) {
     for ( i; i--; ) {
         $img = images.eq( i );
         data = $img.data();
-        width = ($img.parent()[ 0 ].clientWidth || window.innerWidth || config.sqsMaxImgWidth);
+        width = (useWidth || $img[ 0 ].clientWidth || $img[ 0 ].parentNode.clientWidth || window.innerWidth);
+        source = data.imgSrc.replace( rQuery, "" );
 
-        data.imgSrc = data.imgSrc.replace( /\?(.*)$/, "" );
+        // Pre-process portrait vs landscape using originalSize
+        if ( data.originalSize ) {
+            dims = getOriginalDims( data.originalSize );
+
+            if ( dims.width > dims.height ) {
+                $img.addClass( "image--wide" );
+
+            } else {
+                $img.addClass( "image--tall" );
+            }
+        }
 
         if ( useVariant && data.variants ) {
             vars = data.variants.split( "," ).map( map );
             variant = getClosestValue( vars, width );
 
             // If the pixel density is higher, use a larger image ?
-            if ( window.devicePixelRatio > 1 ) {
+            //if ( window.devicePixelRatio > 1 ) {
                 // Splice off the variant that was matched
-                vars.splice( vars.indexOf( variant, 1 ) );
+            //    vars.splice( vars.indexOf( variant ), 1 );
 
                 // Apply the new, larger variant as the format
-                variant = getClosestValue( vars, variant );
-            }
+            //    variant = getClosestValue( vars, variant );
+            //}
 
-            $img.attr( config.lazyImageAttr, `${data.imgSrc}?format=${variant}w` );
-
-        } else {
-            $img.attr( config.lazyImageAttr, `${data.imgSrc}?format=original` );
+            $img[ 0 ].setAttribute( config.lazyImageAttr, `${source}?format=${variant}w` );
         }
     }
 
     return new ImageLoader({
         elements: images,
         property: config.lazyImageAttr,
-        transitionDelay: 0
-
-    }).on( "data", handler );
-};
-
-
-/**
- *
- * @description Load all deps for a module
- * @method loadDependencies
- * @param {object} data The dependency data
- * @param {function} callback Function to call when all deps are loaded
- * @memberof util
- *
- */
-const loadDependencies = function ( data, callback ) {
-    let i = 0;
-    const total = data.sources.length;
-    const onload = function () {
-        i++;
-
-        if ( i === total ) {
-            console.log( "dependencies loaded", data );
-
-            if ( typeof data.callback === "function" ) {
-                data.callback();
-            }
-
-            if ( typeof callback === "function" ) {
-                callback();
-            }
-        }
-    };
-
-    data.sources.forEach(( source ) => {
-        if ( source.type === "script" ) {
-            loadJS( (config.asyncScriptPath + source.file), onload );
-
-        } else if ( source.type === "style" ) {
-            loadCSS( (config.asyncStylePath + source.file) ).onloadcssdefined( onload );
-        }
+        executor: handler
     });
-};
-
-
-/**
- *
- * @description Toggle on/off scrollability
- * @method disableMouseWheel
- * @param {boolean} enable Flag to enable/disable
- * @memberof util
- *
- */
-const disableMouseWheel = function ( enable ) {
-    if ( enable ) {
-        dom.doc.on( "DOMMouseScroll mousewheel", preNoop );
-
-    } else {
-        dom.doc.off( "DOMMouseScroll mousewheel" );
-    }
-};
-
-
-/**
- *
- * @description Toggle on/off touch movement
- * @method disableTouchMove
- * @param {boolean} enable Flag to enable/disable
- * @memberof util
- *
- */
-const disableTouchMove = function ( enable ) {
-    if ( enable ) {
-        dom.doc.on( "touchmove", preNoop );
-
-    } else {
-        dom.doc.off( "touchmove" );
-    }
 };
 
 
@@ -380,8 +252,8 @@ const getTransitionDuration = function ( el ) {
     let multiplyBy = 1000;
 
     if ( el ) {
-        duration = getComputedStyle( el )[ Hammer.prefixed( el.style, "transition-duration" ) ];
-        isSeconds = duration.indexOf( "ms" ) === -1;
+        duration = getComputedStyle( el )[ "transition-duration" ];
+        isSeconds = String( duration ).indexOf( "ms" ) === -1;
         multiplyBy = isSeconds ? 1000 : 1;
 
         ret = parseFloat( duration ) * multiplyBy;
@@ -406,58 +278,127 @@ const noop = function () {
 
 /**
  *
- * @description Randomize array element order in-place.
- * Using Fisher-Yates shuffle algorithm.
- * @method shuffle
- * @param {object} arr The array to shuffle
+ * @public
+ * @method getOriginalDims
  * @memberof util
- * @returns {array}
+ * @param {string} original The original image dims
+ * @description Get an object reference to original dims.
+ *              Format: "1600x1600"
+ * @returns {object}
  *
  */
-const shuffle = function ( arr ) {
-    let i = arr.length - 1;
-    let j = 0;
-    let temp = arr[ i ];
+const getOriginalDims = function ( original ) {
+    const dims = original.split( "x" );
 
-    for ( i; i > 0; i-- ) {
-        j = Math.floor( Math.random() * (i + 1) );
-        temp = arr[ i ];
-
-        arr[ i ] = arr[ j ];
-        arr[ j ] = temp;
-    }
-
-    return arr;
+    return {
+        width: parseInt( dims[ 0 ], 10 ),
+        height: parseInt( dims[ 1 ], 10 )
+    };
 };
 
 
 /**
  *
- * @description Parse a floating point time value into a distinguished time representation
- * @method parseTime
- * @param {float} time The floating point time value
+ * @public
+ * @method getPageKey
  * @memberof util
+ * @description Get the unique page key for cache and such
+ * @returns {object}
+ *
+ */
+const getPageKey = function () {
+    let ret = null;
+
+    if ( window.location.pathname === config.appRoot ) {
+        ret = config.homepageKey;
+
+    } else {
+        ret = `${window.location.pathname}${window.location.search}`;
+    }
+
+    return ret;
+};
+
+
+/**
+ *
+ * @public
+ * @method extendObject
+ * @memberof util
+ * @param {object} target The target object/array
+ * @param {object} arrow The incoming object/array
+ * @description Merge objects and arrays by cloning - non-mutable
+ * @returns {object}
+ *
+ */
+const extendObject = function ( target, arrow ) {
+    let i = null;
+
+    // Never mutate the target
+    const ret = Array.isArray( target ) ? [] : {};
+
+    // Merge Arrays
+    if ( Array.isArray( arrow ) ) {
+        i = target.length;
+
+        for ( i; i--; ) {
+            ret[ i ] = target[ i ];
+        }
+
+        i = arrow.length;
+
+        for ( i; i--; ) {
+            ret[ i ] = arrow[ i ];
+        }
+
+    // Merge Objects
+    } else {
+        for ( i in target ) {
+            if ( target.hasOwnProperty( i ) ) {
+                ret[ i ] = target[ i ];
+            }
+        }
+
+        for ( i in arrow ) {
+            if ( arrow.hasOwnProperty( i ) ) {
+                ret[ i ] = arrow[ i ];
+            }
+        }
+    }
+
+    return ret;
+};
+
+
+/**
+ *
+ * @public
+ * @method slugify
+ * @memberof util
+ * @param {string} str The string to slug
+ * @description Slugify a string
  * @returns {string}
  *
  */
-const parseTime = function ( time ) {
-    time *= 1000;
+const slugify = function ( str ) {
+    str = str.toString().toLowerCase().trim()
+        // Replace & with "and"
+        .replace( /&/g, "-and-" )
 
-    const minutes = parseInt( time / (1000 * 60), 10 );
-    let seconds = parseInt( time / 1000, 10) % 60;
+        // Replace spaces, non-word characters and dashes with a single dash (-)
+        .replace( /[\s\W-]+/g, "-" )
 
-    if ( seconds < 10 ) {
-        seconds = `0${seconds}`;
-    }
+        // Replace leading trailing slashes with an empty string - nothing
+        .replace( /^[-]+|[-]+$/g, "" );
 
-    return `${minutes}:${seconds}`;
+    return (str ? config.homepageKey : str);
 };
 
 
 /**
  *
  * @method getDefaultHammerOptions
- * @memberof util
+ * @memberof core.util
  * @description The default options for Hammer JS.
  *              Disables cssProps for non-touch experiences.
  * @returns {object}
@@ -479,15 +420,41 @@ const getDefaultHammerOptions = function () {
 
 /**
  *
- * @public
- * @method getPageKey
+ * Get the applied transform values from CSS
+ * @method getTransformValues
+ * @param {object} el The DOMElement
  * @memberof util
- * @description Determine the key for local page cache storage.
- * @returns {string}
+ * @returns {object}
  *
  */
-const getPageKey = function () {
-    return `${window.location.pathname}${window.location.search}`;
+const getTransformValues = function ( el ) {
+    if ( !el ) {
+        return null;
+    }
+
+    const transform = window.getComputedStyle( el )[ Hammer.prefixed( el.style, "transform" ) ];
+    const values = transform.replace( /matrix|3d|\(|\)|\s/g, "" ).split( "," );
+    const ret = {};
+
+    // No Transform
+    if ( values[ 0 ] === "none" ) {
+        ret.x = 0;
+        ret.y = 0;
+        ret.z = 0;
+
+    // Matrix 3D
+    } else if ( values.length === 16 ) {
+        ret.x = parseFloat( values[ 12 ] );
+        ret.y = parseFloat( values[ 13 ] );
+        ret.z = parseFloat( values[ 14 ] );
+
+    } else {
+        ret.x = parseFloat( values[ 4 ] );
+        ret.y = parseFloat( values[ 5 ] );
+        ret.z = 0;
+    }
+
+    return ret;
 };
 
 
@@ -496,32 +463,18 @@ const getPageKey = function () {
  * Export
 *******************************************************************************/
 export default {
-    // Classes
-    mediabox,
-    emitter,
-    scroller,
-    resizer,
-
-    // Loading
-    loadImages,
-    loadDependencies,
-    updateImages,
-    isElementLoadable,
-    isElementInViewport,
-    getElementsInView,
-
-    // Disabling
-    disableMouseWheel,
-    disableTouchMove,
-
-    // Random
     px,
     noop,
-    shuffle,
-    parseTime,
+    slugify,
+    getPageKey,
+    loadImages,
     translate3d,
+    extendObject,
+    updateImages,
+    isElementLoadable,
+    getElementsInView,
+    getTransformValues,
+    isElementInViewport,
     getTransitionDuration,
-    safePreventDefault,
-    getDefaultHammerOptions,
-    getPageKey
+    getDefaultHammerOptions
 };

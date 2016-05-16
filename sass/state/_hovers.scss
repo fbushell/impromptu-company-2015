@@ -1,5 +1,20 @@
 .is-hoverable {
 
-    
+/*
+    .h2 a:hover {
+        border-bottom-color: transparent;
+        }
+*/
+
+}
+
+
+
+.is-touchable {
+
+    .gallery__figure:after,
+    .gallery__figure:before {
+        display: none;
+        }
 
 }

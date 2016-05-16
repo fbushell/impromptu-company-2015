@@ -22,24 +22,6 @@
 
 
 /******************************************************************************
- * ProperJS ImageLoader Hooks
-*******************************************************************************/
-.-is-lazy-loading {
-    //opacity: 0;
-    }
-.-is-lazy-transition {
-    //transition: opacity $base-duration $ease-cubic;
-    }
-.-is-lazy-loaded {
-    //opacity: 1;
-    }
-.-is-lazy-handled {
-    // Just a good hook
-    }
-
-
-
-/******************************************************************************
  * Typography
 *******************************************************************************/
 .-text--center {
@@ -55,5 +37,12 @@
 
 
 .-spacer {
-    width: $wrapper-padding;
+    width: $spacer-padding;
+    }
+
+.-valign-top {
+    vertical-align: top;
+    }
+.-topper {
+    padding-top: ($expander-padding + 90px);
     }

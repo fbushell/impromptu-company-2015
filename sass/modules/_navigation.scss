@@ -1,14 +1,25 @@
 /******************************************************************************
  * Nav Menu
 *******************************************************************************/
-.nav {
-    font-size: 0;
+.nav {}
+.nav--projects {
+    display: none;
     }
-.nav__ul {
-    display: inline-block;
-    line-height: 1;
+
+
+
+.nav__menu {
+    position: relative;
     }
-.nav__li {
+.nav__back {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY( -50% );
     }
-.nav__a {
+.nav__back--left {
+    left: 0;
+    }
+.nav__back--right {
+    right: 0;
     }

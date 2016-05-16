@@ -50,19 +50,19 @@
 @mixin h1() {
     display: inline-block;
     font-size: $h1-size;
+    font-weight: 600;
     line-height: 1.25;
-    max-width: 80%;
-    width: 100%;
     @include font-sans-text-medium();
 }
 @mixin h2() {
     font-size: $h2-size;
-    line-height: 1.333333;
+    font-weight: 600;
+    line-height: 1.2;
     @include font-sans-text-medium();
 }
 @mixin h3() {
     font-size: $h3-size;
-    line-height: 1.4166666667;
+    line-height: 1.2;
     @include font-sans-text-medium();
 }
 
@@ -72,7 +72,7 @@
  * Layout / Spacing
 *******************************************************************************/
 @mixin layout-frame() {
-    padding: $header-fix-height $wrapper-padding 0;
+    padding: $header-fix-height ($photos-padding / 2) 0;
 }
 
 
